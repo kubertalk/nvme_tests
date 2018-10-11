@@ -53,8 +53,8 @@ class RunTest(object):
             test_bitmap = reduce(lambda x,y: x | y, [z[1] for z in self.sel_tests])
 
         # update user-selected tests
-        print(test_bitmap)
-        print(self.driver.query_tests(test_bitmap))
+        #print(test_bitmap)
+        #print(self.driver.query_tests(test_bitmap))
         sel_ids = test_bitmap & self.driver.query_tests(test_bitmap)
         if sel_ids == 0:
             return False

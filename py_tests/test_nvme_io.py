@@ -74,9 +74,12 @@ class TestNvmeIo(TestNvme):
 
     @tools.nottest
     def __gen_seq_data_file(self, num_dws=1024):
+        """
+        added by kuber
+        """
         with open(self.wr_file, 'w') as wf:
             for i in range(num_dws):
-                dw = [for x in range('4')]
+                dw = ['012345678ABCDEF']
                 #wf.write(''.join(dw).encode('utf-8'))
                 wf.write(''.join(dw))
         return True 
@@ -111,7 +114,7 @@ class TestNvmeIo(TestNvme):
 
     @tools.nottest
     @calc_avg_bw("Read")
-    def io_read(self, slba, nlb, num_bytes, fname, use_dd=False, bwlog_en=False, cmdlog_en=False):
+    def io_read(self, slba, nlb, num_bytes, fname, use_dd=False, bwlog_en=False, cmdlog_en=True):
 
         if not use_dd:
             kwargs = {'ns1': self.ns1, 
@@ -129,7 +132,7 @@ class TestNvmeIo(TestNvme):
 
     @tools.nottest
     @calc_avg_bw("Write")
-    def io_write(self, slba, nlb, num_bytes, fname, use_dd=False, bwlog_en=False, cmdlog_en=False):
+    def io_write(self, slba, nlb, num_bytes, fname, use_dd=False, bwlog_en=False, cmdlog_en=True):
         if not use_dd:
             kwargs = {'ns1': self.ns1, 
                     'args': self.__io_rw_args(slba, nlb, num_bytes, fname)}
@@ -192,25 +195,26 @@ class TestNvmeIo(TestNvme):
 
     def test_seq_data_xfer_4k(self):
         """
-        Test sequential 4k data transfer using IO read/write command 
+        Test sequential 4k data transfer using IO read/write command, added by kuber
         """
-        # wr_file = 'data/{}'.format(self.__get_rand_video_file())
-        # if not os.path.exists(wr_file):
-        #     return False 
+        wr_file = 'data/{}'.format(self.__gen_seq_data_file())
+        if not os.path.exists(wr_file):
+            return False 
+
         self.get_ns_info()
-        num_bytes = os.path.getsize(self.wr_file)
+        num_bytes = os.path.getsize(wr_file)
         # zero's based
         nlb = math.ceil(num_bytes * 1.0 / self.lba_ds)
         max_lba_id = self.max_lba - nlb
         slba = random.randint(0, max_lba_id)
         # NLB uses 0's based value
         nlb -= 1
-        print("Data: BYTE_NUM={}, SLBA={}, NLB={}".format(num_bytes, hex(slba), hex(nlb)))
+        print("Seq Data: BYTE_NUM={}, SLBA={}, NLB={}".format(num_bytes, hex(slba), hex(nlb)))
 
-        assert_equal(self.__gen_seq_data_file(num_dws), True)
-        assert_equal(self.io_write(slba, nlb, num_bytes, self.wr_file, bwlog_en=True), 0)
-        assert_equal(self.io_read(slba, nlb, num_bytes, self.rd_file, bwlog_en=True), 0)
-        assert_equal(filecmp.cmp(self.wr_file, self.rd_file), True)
+        #assert_equal(self.__gen_seq_data_file(num_dws), True)
+        assert_equal(self.io_write(slba, nlb, num_bytes, wr_file, bwlog_en=True, cmdlog_en=True), 0)
+        assert_equal(self.io_read(slba, nlb, num_bytes, self.rd_file, bwlog_en=True, cmdlog_en=True), 0)
+        assert_equal(filecmp.cmp(wr_file, self.rd_file), True)
 
     def test_bulk_data_xfer_128k(self):
         """
