@@ -204,7 +204,7 @@ class TestNvmeIo(TestNvme):
         self.get_ns_info()
         num_bytes = os.path.getsize(wr_file)
         # zero's based
-        nlb = math.ceil(num_bytes * 4.0 / self.lba_ds)
+        nlb = math.ceil(num_bytes * 1.0 / self.lba_ds)
         max_lba_id = self.max_lba - nlb
         slba = random.randint(0, max_lba_id)
         # NLB uses 0's based value
@@ -243,8 +243,8 @@ class TestNvmeIo(TestNvme):
             # delete all intermidate files
             subprocess.call(r'rm -f data/wrsplit* data/rdsplit*', shell=True)
         else:
-            assert_equal(self.io_write(slba, nlb, num_bytes, wr_file, bwlog_en=True, cmdlog_en=True), 0)
-            assert_equal(self.io_read(slba, nlb, num_bytes, self.rd_file, bwlog_en=True, cmdlog_en=True), 0)
+            assert_equal(self.io_write(slba, nlb, num_bytes, wr_file, use_dd=True, bwlog_en=True, cmdlog_en=True), 0)
+            assert_equal(self.io_read(slba, nlb, num_bytes, self.rd_file, use_dd=True, bwlog_en=True, cmdlog_en=True), 0)
 
         # sanity check
         assert_equal(filecmp.cmp(wr_file, self.rd_file), True)
