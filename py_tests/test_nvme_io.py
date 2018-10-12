@@ -197,14 +197,14 @@ class TestNvmeIo(TestNvme):
         """
         Test sequential 4k data transfer using IO read/write command, added by kuber
         """
-        wr_file = 'data/{}'.format(self.__gen_seq_data_file(num_dws=1024))
+        wr_file = 'data/{}'.format(self.__gen_seq_data_file())
         if not os.path.exists(wr_file):
             return False 
 
         self.get_ns_info()
         num_bytes = os.path.getsize(wr_file)
         # zero's based
-        nlb = math.ceil(num_bytes * 1.0 / self.lba_ds)
+        nlb = math.ceil(num_bytes * 4.0 / self.lba_ds)
         max_lba_id = self.max_lba - nlb
         slba = random.randint(0, max_lba_id)
         # NLB uses 0's based value
