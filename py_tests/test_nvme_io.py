@@ -211,9 +211,42 @@ class TestNvmeIo(TestNvme):
         nlb -= 1
         print("Seq Data: BYTE_NUM={}, SLBA={}, NLB={}".format(num_bytes, hex(slba), hex(nlb)))
 
-        #assert_equal(self.__gen_seq_data_file(num_dws), True)
-        assert_equal(self.io_write(slba, nlb, num_bytes, wr_file, bwlog_en=True, cmdlog_en=True), 0)
-        assert_equal(self.io_read(slba, nlb, num_bytes, self.rd_file, bwlog_en=True, cmdlog_en=True), 0)
+        max_support_bytes = 128 * 1024
+        if num_bytes > max_support_bytes:
+            # delete all intermidate files
+            subprocess.call(r'rm -f data/wrsplit* data/rdsplit*', shell=True)
+            # write
+            cmd = r'split --bytes=128K {} data/wrsplit'.format(wr_file)
+            subprocess.call(cmd, shell=True)
+            curr_slba = slba
+            file_sizes = []
+            split_files = sorted(glob.glob('data/wrsplit*'))
+            for f in split_files:
+                size = os.path.getsize(f)
+                file_sizes.append(size)
+                nlb = math.ceil(size * 1.0 / self.lba_ds)
+                bwlog_en = True if len(file_sizes) == len(split_files) else False
+                #print("Write {} bytes from file {} to LBA{}".format(size, f, curr_slba))
+                assert_equal(self.io_write(curr_slba, nlb-1, size, f, bwlog_en=bwlog_en, cmdlog_en=True), 0)
+                curr_slba += nlb
+            # read
+            curr_slba = slba
+            for i, size in enumerate(file_sizes):
+                f = 'data/rdsplit{:04d}'.format(i)
+                nlb = math.ceil(size * 1.0 / self.lba_ds)
+                bwlog_en = True if len(file_sizes)-1 == i else False
+                #print("Read {} bytes from LBA{} to file {}".format(size, curr_slba, f))
+                assert_equal(self.io_read(curr_slba, nlb-1, size, f, bwlog_en=bwlog_en, cmdlog_en=True), 0)
+                curr_slba += nlb
+            err = subprocess.call(r'cat data/rdsplit* > {}'.format(self.rd_file), shell=True)
+            assert_equal(err, 0, "ERROR: failed to merge read files ")
+            # delete all intermidate files
+            subprocess.call(r'rm -f data/wrsplit* data/rdsplit*', shell=True)
+        else:
+            assert_equal(self.io_write(slba, nlb, num_bytes, wr_file, bwlog_en=True, cmdlog_en=True), 0)
+            assert_equal(self.io_read(slba, nlb, num_bytes, self.rd_file, bwlog_en=True, cmdlog_en=True), 0)
+
+        # sanity check
         assert_equal(filecmp.cmp(wr_file, self.rd_file), True)
 
     def test_bulk_data_xfer_128k(self):
