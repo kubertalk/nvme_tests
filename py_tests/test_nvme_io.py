@@ -197,7 +197,7 @@ class TestNvmeIo(TestNvme):
         """
         Test sequential 4k data transfer using IO read/write command, added by kuber
         """
-        wr_file = 'data/{}'.format(self.__gen_seq_data_file())
+        wr_file = 'data/{}'.format(self.__gen_seq_data_file(num_dws=1024))
         if not os.path.exists(wr_file):
             return False 
 
