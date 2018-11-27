@@ -80,7 +80,7 @@ class TestNvmeIo(TestNvme):
         with open(self.wr_file, 'w') as wf:
             for i in range(num_dws):
                 dw = ['0123456789ABCDEF']
-                for s in range(data_size/4): 
+                for s in range(data_size//4): 
                 #wf.write(''.join(dw).encode('utf-8'))
                     wf.write(''.join(dw))
         return True 
