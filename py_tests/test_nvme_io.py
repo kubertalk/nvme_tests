@@ -79,7 +79,7 @@ class TestNvmeIo(TestNvme):
         """
         with open(self.wr_file, 'w') as wf:
             for i in range(num_dws):
-                dw = ['0123456789ABCDEF']
+                dw = ['AAAAAAAAAAAAAAAA']
                 for s in range(data_size//4): 
                 #wf.write(''.join(dw).encode('utf-8'))
                     wf.write(''.join(dw))
@@ -204,6 +204,7 @@ class TestNvmeIo(TestNvme):
 
         self.get_ns_info()
         assert_equal(self.__gen_seq_data_file(), True)
+        
         num_bytes = os.path.getsize(self.wr_file)
 
         # zero's based
