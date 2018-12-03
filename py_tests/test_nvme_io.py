@@ -13,7 +13,7 @@ import glob
 import random
 import filecmp
 import subprocess
-
+import difflib #kuber add
 # Third-party libraries
 from nose import tools
 from nose.tools import assert_equal
@@ -79,11 +79,11 @@ class TestNvmeIo(TestNvme):
         """
         with open(self.wr_file, 'w') as wf:
             for i in range(num_dws):
-                dw = 0
+                dw = ['0123456789ABCDEF']
                 for s in range(data_size//4): 
                 #wf.write(''.join(dw).encode('utf-8'))
                     wf.write(''.join(dw))
-                    dw += 1
+                    #dw += 1
         return True 
 
     @tools.nottest
@@ -252,6 +252,8 @@ class TestNvmeIo(TestNvme):
             assert_equal(self.io_read(slba, nlb, num_bytes, self.rd_file, bwlog_en=True, cmdlog_en=True), 0)
         # sanity check   
         assert_equal(filecmp.cmp(self.wr_file, self.rd_file), True)
+        #diff_list = list(difflib.unified_diff(self.wr_file.readlines(),self.rd_file.readlines()))
+        #assertLessEqual(len(diff_list), 10)
            
     def test_bulk_data_xfer_128k(self):
         """
