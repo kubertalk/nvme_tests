@@ -265,7 +265,7 @@ class TestNvmeIo(TestNvme):
         # sanity check   
         #assert_equal(filecmp.cmp(self.wr_file, self.rd_file), True)
         diff_list = list(difflib.unified_diff(self.wr_file,self.rd_file))
-        assert_less_equal(len(diff_list), 10)
+        assert_less_equal(len(diff_list), 30)
            
     def test_bulk_data_xfer_128k(self):
         """
