@@ -92,9 +92,9 @@ class TestNvmeIo(TestNvme):
 
         #if you need a random sequence, use following:
         os.system("dd if=/dev/urandom of=output.txt bs=4096 count=4")
-        file_if = open("output.txt",encoding="utf-8")
-        file_of = open(self.wr_file, 'w', encoding="utf-8")
-        shutil.copyfileobj(file_if, file_of)
+        #file_if = open("output.txt",encoding="utf-8")
+        #file_of = open(self.wr_file, 'w', encoding="utf-8")
+        shutil.copyfile(output.txt, self.wr_file)
         return True
       
 
