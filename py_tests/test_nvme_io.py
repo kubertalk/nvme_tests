@@ -17,6 +17,7 @@ import difflib #kuber add
 # Third-party libraries
 from nose import tools
 from nose.tools import assert_equal
+from nose.tools import assert_less_equal
 
 # User-defined libraries
 from test_nvme import TestNvme
@@ -73,19 +74,23 @@ class TestNvmeIo(TestNvme):
         return files[fid]
 
     @tools.nottest
-    def __gen_seq_data_file(self, num_dws=1024, data_size=4):
+    def __gen_seq_data_file(self, num_dws=1024):
         """
         added by kuber
         """
-        with open(self.wr_file, 'w') as wf:
-            dw = [i+1 for i in range(0,num_dws)]
+        #with open(self.wr_file, 'w') as wf:
+        #if you need a asscending sequence, use following:
+            #dw = [i+1 for i in range(num_dws)]
+            #wf.write(''.join(str(s) for s in dw))
+        #if you need a circle sequence, use following:
+            #for i in range(num_dws):
                 #dw = ['0123456789ABCDEF']
-                
-                #for s in range(data_size//4): 
-            wf.write(''.join(dw).encode('utf-8'))
-                    #wf.write(''.join(dw))
-                   
-        return True 
+                #wf.write(''.join())
+        #return True 
+        #if you need a random sequence, use following:
+        self.wr_file = os.system("dd if=/dev/urandom of=output.txt bs=4096 count=4")
+
+      
 
     @tools.nottest
     def __get_latency(self, text, use_dd=False):
@@ -254,7 +259,7 @@ class TestNvmeIo(TestNvme):
         # sanity check   
         #assert_equal(filecmp.cmp(self.wr_file, self.rd_file), True)
         diff_list = list(difflib.unified_diff(self.wr_file.readlines(),self.rd_file.readlines()))
-        self.assertLessEqual(len(diff_list), 50)
+        assert_less_equal(len(diff_list), 10)
            
     def test_bulk_data_xfer_128k(self):
         """
