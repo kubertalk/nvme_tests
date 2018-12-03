@@ -204,7 +204,7 @@ class TestNvmeIo(TestNvme):
         #     return False 
 
         self.get_ns_info()
-        assert_equal(self.__gen_seq_data_file(num_dws=16384), True)
+        assert_equal(self.__gen_seq_data_file(), True)
         
         num_bytes = os.path.getsize(self.wr_file)
 
