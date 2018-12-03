@@ -13,7 +13,9 @@ import glob
 import random
 import filecmp
 import subprocess
-import difflib #kuber add
+#kuber add
+import difflib 
+import shutil
 # Third-party libraries
 from nose import tools
 from nose.tools import assert_equal
@@ -82,14 +84,17 @@ class TestNvmeIo(TestNvme):
         #if you need a asscending sequence, use following:
             #dw = [i+1 for i in range(num_dws)]
             #wf.write(''.join(str(s) for s in dw))
-            
+
         #if you need a circle sequence, use following:
             #for i in range(num_dws):
                 #dw = ['0123456789ABCDEF']
                 #wf.write(''.join())
 
         #if you need a random sequence, use following:
-        self.wr_file = os.system("dd if=/dev/urandom of=output.txt bs=4096 count=4")
+        os.system("dd if=/dev/urandom of=output.txt bs=4096 count=4")
+        file_if = open("output.txt",encoding="utf-8")
+        file_of = open(self.wr_file, 'w', encoding="utf-8")
+        shutil.copyfileobj(file_if, file_of)
         return True
       
 
