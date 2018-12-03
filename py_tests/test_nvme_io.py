@@ -78,13 +78,13 @@ class TestNvmeIo(TestNvme):
         added by kuber
         """
         with open(self.wr_file, 'w') as wf:
-            for i in range(0,num_dws):
+            dw = [i+1 for i in range(0,num_dws)]
                 #dw = ['0123456789ABCDEF']
-                dw = [i+1]
-                for s in range(data_size//4): 
-                #wf.write(''.join(dw).encode('utf-8'))
-                    wf.write(''.join(dw))
-                    #dw += 1
+                
+                #for s in range(data_size//4): 
+            wf.write(''.join(dw).encode('utf-8'))
+                    #wf.write(''.join(dw))
+                   
         return True 
 
     @tools.nottest
@@ -205,7 +205,7 @@ class TestNvmeIo(TestNvme):
         #     return False 
 
         self.get_ns_info()
-        assert_equal(self.__gen_seq_data_file(num_dws=16*1024), True)
+        assert_equal(self.__gen_seq_data_file(num_dws=16384), True)
         
         num_bytes = os.path.getsize(self.wr_file)
 
