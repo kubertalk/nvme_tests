@@ -95,6 +95,7 @@ class TestNvmeIo(TestNvme):
         #file_if = open("output.txt",encoding="utf-8")
         #file_of = open(self.wr_file, 'w', encoding="utf-8")
         shutil.copyfile("output.txt", self.wr_file)
+        #just return true to the caller
         return True
       
 

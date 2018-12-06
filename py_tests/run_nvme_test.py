@@ -160,6 +160,8 @@ def main():
             help="Run nvme tests in debug mode")
     parser.add_argument('-t', '--test', nargs='?', type=int, 
             help="Specify which tests will be executed")
+    parser.add_argument('-s', '--start', action='store_true', 
+            help="Just start to run it")
     args = parser.parse_args()
 
     log_file = None
