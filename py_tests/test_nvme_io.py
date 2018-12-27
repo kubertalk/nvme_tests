@@ -91,10 +91,21 @@ class TestNvmeIo(TestNvme):
                 #wf.write(''.join())
 
         #if you need a random sequence, use following:
-        os.system("dd if=/dev/urandom of=output.txt bs=4096 count=4")
-        #file_if = open("output.txt",encoding="utf-8")
-        #file_of = open(self.wr_file, 'w', encoding="utf-8")
-        shutil.copyfile("output.txt", self.wr_file)
+        #os.system("dd if=/dev/urandom of=output.txt bs=4096 count=4")
+        #shutil.copyfile("output.txt", self.wr_file)
+
+        #if you need a inorder sequence, use following:
+        with open(self.wr_file, 'w') as wf:
+            for i in range(4096):
+                if i<10:    
+                    wf.write(str(0)+str(0)+str(0)+str(i))
+                elif i<100:
+                    wf.write(str(0)+str(0)+str(i))
+                elif i<1000:               
+                    wf.write(str(0)+str(i))
+                else:
+                    wf.write(str(i))
+
         #just return true to the caller
         return True
       
