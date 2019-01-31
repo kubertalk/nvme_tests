@@ -11,6 +11,6 @@
 
 cd /home/ecsys_cpesv/nvme_tests
 
-sudo python3 nvme_boot.py &
+python3 nvme_boot.py
 
 exit 0
