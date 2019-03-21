@@ -37,7 +37,7 @@ function install_tests () {
     #sudo mv $tmp_clone_path/py_tests/nvme-init $nvme_init_path
     #sudo chmod 755 $nvme_init_path/nvme-init
     #sudo update-rc.d nvme-init defaults 95
-    mv $tmp_clone_path/py_tests/setup_nvme_host_kuber.sh $HOME
+    mv $tmp_clone_path/setup_nvme_host_kuber.sh $HOME
     mv $tmp_clone_path/py_tests $nvme_tests_path
     rm -rf $tmp_clone_path
     echo "[ok] nvme setup file & nvme tests both installed"
